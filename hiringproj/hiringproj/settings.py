@@ -70,7 +70,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'hiringproj.wsgi.application'
-
+STATIC_ROOT = BASE_DIR / 'static'
+STATIC_URL = '/static/'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -118,6 +119,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+LOGIN_URL = 'login'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

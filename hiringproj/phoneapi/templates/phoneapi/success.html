@@ -1,0 +1,15 @@
+{% extends "phoneapi/base.html" %}
+
+{% block headcustom %}
+    <title>Success</title>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h2>با موفقیت ذخیره شد</h2>
+        <div class="mt-4">
+            <a href="{% url 'index' %}" class="btn btn-primary">بازگشت به صفحه‌ی اصلی</a>
+        </div>
+    </div>
+{% endblock %}
+

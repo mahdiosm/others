@@ -1,0 +1,23 @@
+<!-- templates/login.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h2 class="mt-4">Login</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary mt-3">Login</button>
+            {% if form.errors %}
+                <div class="alert alert-danger mt-3">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+        </form>
+    </div>
+</body>
+</html>
