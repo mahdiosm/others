@@ -7,7 +7,6 @@ availability_choices = [
 ]
 
 
-
 class Phone(models.Model):
     brand = models.CharField(max_length=200, verbose_name="نام برند", blank=False, null=False)
     brand_country = models.CharField(max_length=200, verbose_name="کشور برند", blank=False, null=False)

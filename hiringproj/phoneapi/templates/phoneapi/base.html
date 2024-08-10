@@ -2,12 +2,15 @@
 <head>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block headcustom %} {% endblock %}
 </head>
 <body>
     <div class="container mt-3">
         <div class="mb-4">
-            <a href="/admin/" class="btn btn-secondary">ورود به صفحه ادمین</a>
+            <a href="{% url 'index' %}" class="btn btn-secondary">بازگشت به صفحه‌ی اصلی</a>
             <a href="{% url 'logout' %}" class="btn btn-danger">خروج</a>
         </div>
         {% block content %}{% endblock %}

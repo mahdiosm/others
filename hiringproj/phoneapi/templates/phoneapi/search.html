@@ -1,0 +1,160 @@
+{% extends "phoneapi/base.html" %}
+
+{% block headcustom %}
+    <title>جستجوی تلفن</title>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <form method="get">
+            <div class="row">
+                <div class="col-md-8">
+                    <input type="text" id="search-bar" name="search_query" class="form-control" placeholder="جستجو..."
+                           value={{ search_query }}>
+                </div>
+                <div class="col-md-4">
+                    <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#filter-options"
+                            aria-expanded="false" aria-controls="filter-options">
+                        فیلتر ها
+                    </button>
+                    <div id="filter-options" class="mt-2 collapse">
+                        <div class="form-row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>انتخاب برند</label>
+                                    <div>
+                                        {{ form.brands }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>انتخاب کشور برند</label>
+                                    <div>
+                                        {{ form.brand_country }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>تطابق کشور سازنده و کشور برند</label>
+                                    <div>
+                                        {{ form.match_countries }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label> موجودها؟</label>
+                                    <div>
+                                        {{ form.is_available }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">اعمال فیلتر</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <hr>
+
+        <div class="row mb-2">
+            <div class="col-md-12 text-left">
+                <button id="json-export" class="btn btn-success">گرفتن خروجی json</button>
+            </div>
+        </div>
+        <div id="phone-table">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>نام برند</th>
+                    <th>مدل</th>
+                    <th>قیمت</th>
+                    <th>رنگ</th>
+                    <th>اندازه صفحه</th>
+                    <th>موجودی</th>
+                    <th>کشور برند</th>
+                    <th>کشور سازنده</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for phone in phones %}
+                    <tr>
+                        <td>{{ phone.brand }}</td>
+                        <td>{{ phone.model }}</td>
+                        <td>{{ phone.price }}</td>
+                        <td>{{ phone.color }}</td>
+                        <td>{{ phone.screen_size }}</td>
+                        <td>{{ phone.is_available|yesno:"موجود,ناموجود" }}</td>
+                        <td>{{ phone.brand_country }}</td>
+                        <td>{{ phone.creator_country }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#search-bar').on('keyup', function () {
+                var query = $(this).val();
+                $.ajax({
+                    url: "{% url 'phone_search_api' %}",
+                    data: {
+                        'query': query
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        var tableBody = $('#phone-table tbody');
+                        tableBody.empty();
+
+                        $.each(data, function (index, phone) {
+                            tableBody.append(
+                                '<tr>' +
+                                '<td>' + phone.brand + '</td>' +
+                                '<td>' + phone.model + '</td>' +
+                                '<td>' + phone.price + '</td>' +
+                                '<td>' + phone.color + '</td>' +
+                                '<td>' + phone.screen_size + '</td>' +
+                                '<td>' + (phone.is_available ? 'موجود' : 'ناموجود') + '</td>' +
+                                '<td>' + phone.brand_country + '</td>' +
+                                '<td>' + phone.creator_country + '</td>' +
+                                '</tr>'
+                            );
+                        });
+                    }
+                });
+            });
+
+            // JSON Export Button Click Handler
+            $('#json-export').on('click', function () {
+                var query = $('#search-bar').val();
+                var brands = $('input[name="brands"]:checked').map(function () {
+                    return this.value;
+                }).get();
+                var brand_country = $('input[name="brand_country"]:checked').map(function () {
+                    return this.value;
+                }).get();
+                var match_countries = $('#id_match_countries').is(':checked');
+                var is_available = $('#id_is_available').is(':checked');
+
+                // Construct the URL with query parameters
+                var url = "{% url 'json_export_view' %}?query=" + encodeURIComponent(query) +
+                    "&brands=" + encodeURIComponent(brands.join(',')) +
+                    "&brand_country=" + encodeURIComponent(brand_country.join(',')) +
+                    "&match_countries=" + match_countries +
+                    "&is_available=" + is_available;
+
+                // Open the JSON content in a new tab
+                window.open(url, '_blank');
+            });
+        });
+    </script>
+{% endblock %}

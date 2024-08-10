@@ -13,7 +13,39 @@ def validate_screen_size(value):
         raise ValidationError("اندازه صفحه باید عددی بزرگتر از 0 باشد.")
 
 
-# forms.py
+class PhoneSearchForm(forms.Form):
+    search_query = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'جستجو...'
+        })
+    )
+    brands = forms.MultipleChoiceField(
+        choices=[(brand, brand) for brand in Phone.objects.values_list('brand', flat=True).distinct()],
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        label="انتخاب برند"
+    )
+
+    brand_country = forms.MultipleChoiceField(
+        choices=[(country, country) for country in Phone.objects.values_list('brand_country', flat=True).distinct()],
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        label="انتخاب کشور برند"
+    )
+
+    match_countries = forms.BooleanField(
+        required=False,
+        label="تطابق کشور سازنده و کشور برند"
+    )
+
+    is_available = forms.BooleanField(
+        required=False,
+        label="فقط موجود‌ها",
+    )
+
+
 class LoginForm(forms.Form):
     username = forms.CharField(
         max_length=150,
